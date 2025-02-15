@@ -34,10 +34,24 @@ class UserAuthTests(APITestCase):
 class APITokenTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="testuser", password="testpass123")
+        self.tokens = None
 
     def test_reset_api_token(self):
-        self.client.login(username="testuser", password="testpass123")
-        response = self.client.post("/auth/token/refresh/")
+        # First, obtain the initial tokens
+        response = self.client.post("/auth/token/", {
+            "username": "testuser",
+            "password": "testpass123"
+        })
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("new_token", response.json())  # Ensure new token is generated
+        self.assertIn("access", response.data)
+        self.assertIn("refresh", response.data)
         
+        # Store the refresh token
+        refresh_token = response.data["refresh"]
+        
+        # Now try to refresh the token
+        response = self.client.post("/auth/token/refresh/", {
+            "refresh": refresh_token
+        })
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("access", response.data)  # Check for new access token
