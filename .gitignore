@@ -1,0 +1,22 @@
+# Virtual environment
+venv/
+.env
+
+# Python files
+*.pyc
+__pycache__/
+
+# Django settings
+*.sqlite3
+/db.sqlite3
+/media/
+staticfiles/
+
+# VS Code and JetBrains IDEs
+.vscode/
+.idea/
+
+# Git credentials
+*.pem
+*.key
+*.env
